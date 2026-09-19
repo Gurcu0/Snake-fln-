@@ -2,7 +2,7 @@
 <html lang="tr">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Oyun Portalı</title>
   <style>
     * {
@@ -21,7 +21,7 @@
       justify-content: center;
       min-height: 100vh;
       overflow-x: hidden;
-      user-select: none; /* Telefonda butonlara basarken metin seçilmesini önler */
+      user-select: none;
       -webkit-user-select: none;
     }
 
@@ -104,7 +104,7 @@
       background: #475569;
     }
 
-    /* EN SAĞ ÜST AYARLAR ÇARKI */
+    /* SAĞ ÜST AYARLAR ÇARKI */
     #settings-cog {
       position: absolute;
       top: 15px;
@@ -303,7 +303,7 @@
 
     /* DOKUNMATİK TELEFON BUTONLARI (PC'DE GİZLİ) */
     #touch-controls {
-      display: none; /* Bilgisayarda varsayılan olarak kapalı */
+      display: none;
       flex-direction: column;
       align-items: center;
       gap: 8px;
@@ -317,13 +317,13 @@
     }
 
     .dpad-btn {
-      width: 65px;
-      height: 65px;
+      width: 60px;
+      height: 60px;
       background: #1e293b;
       border: 2px solid #38bdf8;
       border-radius: 12px;
       color: #38bdf8;
-      font-size: 1.8rem;
+      font-size: 1.6rem;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -338,8 +338,8 @@
       transform: scale(0.92);
     }
 
-    /* --- TELEFON / MOBİL EKRANLAR İÇİN DÜZENLEME (768px altı) --- */
-    @media (max-width: 768px) {
+    /* --- TELEFON DİK KONUM (PORTRAIT - 768px altı) --- */
+    @media (max-width: 768px) and (orientation: portrait) {
       .top-bar {
         width: 100%;
         max-width: 400px;
@@ -351,7 +351,6 @@
         width: 100%;
       }
 
-      /* MOBİL BOYUTU: TELEFONDA 400x400 OLUR */
       canvas {
         width: 100%;
         max-width: 400px;
@@ -368,9 +367,74 @@
         margin-top: 5px;
       }
 
-      /* TELEFONDA DOKUNMATİK BUTONLARI AÇ */
       #touch-controls {
         display: flex;
+      }
+    }
+
+    /* --- TELEFON YATAY KONUM (LANDSCAPE - EL KONSOLU MODU) --- */
+    @media (max-width: 900px) and (orientation: landscape) {
+      #game-container {
+        padding: 5px;
+        justify-content: flex-start;
+      }
+
+      .top-bar {
+        width: 95vw;
+        padding: 6px 15px;
+        margin-bottom: 5px;
+      }
+
+      .game-layout {
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        gap: 25px;
+        width: 95vw;
+      }
+
+      /* YATAYDA KONSOL DÜZENİ: SOLDA BUTONLAR, ORTADA OYUN, SAĞDA REKORLAR */
+      #touch-controls {
+        display: flex;
+        margin-top: 0;
+        order: 1; /* Butonları en sola alır */
+      }
+
+      .dpad-btn {
+        width: 50px;
+        height: 50px;
+        font-size: 1.3rem;
+      }
+
+      canvas {
+        order: 2; /* Oyun alanını ortalar */
+        height: 75vh;
+        width: 75vh; /* Yatay ekranda kareyi korur ve ekrana sığar */
+        max-width: none;
+      }
+
+      .leaderboard {
+        order: 3; /* Liderlik tablosunu sağa alır */
+        position: relative;
+        left: 0;
+        top: 0;
+        width: 180px;
+        padding: 8px;
+        font-size: 0.8rem;
+      }
+
+      .leaderboard h3 {
+        font-size: 0.9rem;
+        margin-bottom: 6px;
+      }
+
+      .leaderboard li {
+        padding: 4px 6px;
+        font-size: 0.75rem;
+      }
+
+      .controls-info {
+        display: none; /* Yatayda yer kaplamaması için alt bilgiyi gizler */
       }
     }
   </style>
@@ -446,6 +510,16 @@
     </div>
 
     <div class="game-layout">
+      <!-- TELEFON SANAL YÖN BUTONLARI (D-PAD) -->
+      <div id="touch-controls">
+        <button class="dpad-btn" onclick="handleDirection('UP')">⬆️</button>
+        <div class="dpad-row">
+          <button class="dpad-btn" onclick="handleDirection('LEFT')">⬅️</button>
+          <button class="dpad-btn" onclick="handleDirection('RIGHT')">➡️</button>
+        </div>
+        <button class="dpad-btn" onclick="handleDirection('DOWN')">⬇️</button>
+      </div>
+
       <canvas id="gameCanvas" width="600" height="600"></canvas>
 
       <div class="leaderboard">
@@ -456,17 +530,7 @@
       </div>
     </div>
     
-    <div class="controls-info" id="status-text">Oynamak için yön tuşlarını veya aşağıdaki okları kullanın!</div>
-
-    <!-- TELEFON SANAL YÖN BUTONLARI (D-PAD) -->
-    <div id="touch-controls">
-      <button class="dpad-btn" onclick="handleDirection('UP')">⬆️</button>
-      <div class="dpad-row">
-        <button class="dpad-btn" onclick="handleDirection('LEFT')">⬅️</button>
-        <button class="dpad-btn" onclick="handleDirection('RIGHT')">➡️</button>
-      </div>
-      <button class="dpad-btn" onclick="handleDirection('DOWN')">⬇️</button>
-    </div>
+    <div class="controls-info" id="status-text">Oynamak için yön tuşlarını veya okları kullanın!</div>
   </div>
 
   <script>
@@ -712,7 +776,7 @@
       initGame();
     }
 
-    // YÖN DEĞİŞTİRME MANTIĞI (HEM TUŞ HEM BUTON İÇİN)
+    // YÖN DEĞİŞTİRME MANTIĞI
     function changeDirection(dir) {
       let moved = false;
       if (dir === "UP" && dy !== 1) { dx = 0; dy = -1; moved = true; }
@@ -726,12 +790,10 @@
       }
     }
 
-    // TELEFON DOKUNMATİK BUTON TIKLAMASI
     function handleDirection(dir) {
       changeDirection(dir);
     }
 
-    // KLAVYEDEN TUŞ BASILMASI
     window.addEventListener("keydown", e => {
       if (document.activeElement.tagName === "INPUT") return;
       if (document.getElementById("game-container").style.display !== "flex") return;
