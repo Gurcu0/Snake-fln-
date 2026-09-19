@@ -104,7 +104,7 @@
       background: #475569;
     }
 
-    /* SAĞ ÜST AYARLAR ÇARKI */
+    /* AYARLAR ÇARKI */
     #settings-cog {
       position: absolute;
       top: 15px;
@@ -196,7 +196,7 @@
       margin-bottom: 12px;
     }
 
-    /* OYUN EKRANI VE BOYUTLAR */
+    /* OYUN EKRANI */
     #game-container {
       display: none;
       flex-direction: column;
@@ -294,7 +294,7 @@
       text-align: center;
     }
 
-    /* DOKUNMATİK TELEFON BUTONLARI */
+    /* TELEFON DOKUNMATİK D-PAD */
     #touch-controls {
       display: none;
       flex-direction: column;
@@ -331,7 +331,7 @@
       transform: scale(0.92);
     }
 
-    /* TELEFON DİK KONUM */
+    /* MOBİL PORTRAIT */
     @media (max-width: 768px) and (orientation: portrait) {
       .top-bar {
         width: 100%;
@@ -365,7 +365,7 @@
       }
     }
 
-    /* TELEFON YATAY KONUM (EL KONSOLU MODU) */
+    /* MOBİL LANDSCAPE (KONSOL MODU) */
     @media (max-width: 900px) and (orientation: landscape) {
       #game-container {
         padding: 5px;
@@ -433,7 +433,7 @@
 </head>
 <body>
 
-  <!-- SAĞ ÜST AYARLAR ÇARKI -->
+  <!-- AYARLAR ÇARKI -->
   <div id="settings-cog" onclick="openSettings()">⚙️</div>
 
   <!-- AYARLAR PENCERESİ -->
@@ -502,7 +502,6 @@
     </div>
 
     <div class="game-layout">
-      <!-- TELEFON SANAL YÖN BUTONLARI (D-PAD) -->
       <div id="touch-controls">
         <button class="dpad-btn" onclick="handleDirection('UP')">⬆️</button>
         <div class="dpad-row">
@@ -527,7 +526,7 @@
 
   <script>
     let currentUser = "";
-    let activeGame = ""; // 'snake', 'brick', 'car'
+    let activeGame = "";
     let gameInterval = null;
     let gameStarted = false;
     let score = 0;
@@ -594,7 +593,7 @@
       }
     }
 
-    /* LİDERLİK TABLOSU MANTIĞI */
+    /* LİDERLİK TABLOSU */
     function getAllScores(gameName) {
       const scores = localStorage.getItem(gameName + "_scores");
       return scores ? JSON.parse(scores) : {};
@@ -629,7 +628,7 @@
 
       top5.forEach((item, index) => {
         const li = document.createElement("li");
-        li.innerHTML = `<span>${index + 1}. ${item.name}</span><span class="score-val">${item.score}</span>`;
+        li.innerHTML = `<span>${index + 1}. ${item.name}</span><span class='score-val'>${item.score}</span>`;
         leaderboardEl.appendChild(li);
       });
     }
@@ -646,7 +645,7 @@
       else if (activeGame === 'car') initCar();
     }
 
-    /* ---------------- 1. YILAN OYUNU MANTIĞI ---------------- */
+    /* 1. YILAN OYUNU */
     const gridSize = 20; 
     const tileCount = canvas.width / gridSize; 
     let snake = [];
@@ -708,7 +707,7 @@
       food.y = Math.floor(Math.random() * tileCount);
     }
 
-    /* ---------------- 2. BRICK BREAKER MANTIĞI ---------------- */
+    /* 2. BRICK BREAKER */
     let paddleWidth = 100, paddleHeight = 15, paddleX = 250;
     let ballX = 300, ballY = 500, ballDX = 4, ballDY = -4, ballRadius = 8;
     let bricks = [], brickRows = 5, brickCols = 7, brickWidth = 75, brickHeight = 20, brickPadding = 8, brickOffsetTop = 50, brickOffsetLeft = 12;
@@ -787,7 +786,7 @@
       ctx.fill();
     }
 
-    /* ---------------- 3. ARABA YARIŞI MANTIĞI ---------------- */
+    /* 3. ARABA YARIŞI */
     let carX = 270, carY = 480, carWidth = 50, carHeight = 80;
     let obstacles = [], obstacleSpeed = 5, carScore = 0;
 
@@ -849,7 +848,7 @@
       obstacles.forEach(obs => ctx.fillRect(obs.x, obs.y, obs.width, obs.height));
     }
 
-    /* ---------------- GENEL YÖNETİM VE KONTROLLER ---------------- */
+    /* KONTROLLER */
     function endGame(msg) {
       gameStarted = false;
       clearInterval(gameInterval);
