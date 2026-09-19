@@ -168,7 +168,7 @@
 
     .games-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
       gap: 20px;
       width: 100%;
     }
@@ -196,12 +196,6 @@
       margin-bottom: 12px;
     }
 
-    .game-card.disabled {
-      opacity: 0.5;
-      filter: grayscale(0.8);
-      pointer-events: none;
-    }
-
     /* OYUN EKRANI VE BOYUTLAR */
     #game-container {
       display: none;
@@ -219,7 +213,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      width: 600px; /* PC Varsayılan Genişliği */
+      width: 600px;
       background: #1e293b;
       padding: 12px 20px;
       border-radius: 8px;
@@ -242,7 +236,6 @@
       position: relative;
     }
 
-    /* PC BOYUTU: 600x600 */
     canvas {
       background-color: #020617;
       border: 3px solid #38bdf8;
@@ -301,7 +294,7 @@
       text-align: center;
     }
 
-    /* DOKUNMATİK TELEFON BUTONLARI (PC'DE GİZLİ) */
+    /* DOKUNMATİK TELEFON BUTONLARI */
     #touch-controls {
       display: none;
       flex-direction: column;
@@ -338,7 +331,7 @@
       transform: scale(0.92);
     }
 
-    /* --- TELEFON DİK KONUM (PORTRAIT - 768px altı) --- */
+    /* TELEFON DİK KONUM (PORTRAIT) */
     @media (max-width: 768px) and (orientation: portrait) {
       .top-bar {
         width: 100%;
@@ -372,7 +365,7 @@
       }
     }
 
-    /* --- TELEFON YATAY KONUM (LANDSCAPE - EL KONSOLU MODU) --- */
+    /* TELEFON YATAY KONUM (LANDSCAPE - EL KONSOLU MODU) */
     @media (max-width: 900px) and (orientation: landscape) {
       #game-container {
         padding: 5px;
@@ -393,11 +386,10 @@
         width: 95vw;
       }
 
-      /* YATAYDA KONSOL DÜZENİ: SOLDA BUTONLAR, ORTADA OYUN, SAĞDA REKORLAR */
       #touch-controls {
         display: flex;
         margin-top: 0;
-        order: 1; /* Butonları en sola alır */
+        order: 1;
       }
 
       .dpad-btn {
@@ -407,14 +399,14 @@
       }
 
       canvas {
-        order: 2; /* Oyun alanını ortalar */
+        order: 2;
         height: 75vh;
-        width: 75vh; /* Yatay ekranda kareyi korur ve ekrana sığar */
+        width: 75vh;
         max-width: none;
       }
 
       .leaderboard {
-        order: 3; /* Liderlik tablosunu sağa alır */
+        order: 3;
         position: relative;
         left: 0;
         top: 0;
@@ -434,7 +426,7 @@
       }
 
       .controls-info {
-        display: none; /* Yatayda yer kaplamaması için alt bilgiyi gizler */
+        display: none;
       }
     }
   </style>
@@ -448,363 +440,29 @@
   <div id="settings-modal" class="modal-overlay">
     <div class="modal-card">
       <h3>Ayar Menüsü</h3>
-      <p style="margin-bottom: 1rem; font-size: 0.9rem; color: #94a3b8;">
-        Aktif Oyuncu: <b id="modal-player-name" style="color:#fff;">-</b>
-      </p>
-      <button class="btn btn-danger" onclick="logoutUser()">Hesap Değiştir / Çıkış Yap</button>
-      <button class="btn" style="background:#475569; margin-top: 8px;" onclick="closeSettings()">Kapat</button>
-    </div>
-  </div>
+      <Yakında çıkacak (henüz çıkmamış) büyük oyunlar için Visual Studio Code'da HTML, CSS ve JavaScript kullanarak oynanabilir, keyifli 2D mini projeler hazırlayabilirsin. İşte VS Code'da yazabileceğin 3 farklı oyun fikri ve mantığı:
 
-  <!-- 1. GİRİŞ EKRANI -->
-  <div id="auth-container">
-    <h2>Oyun Portalı</h2>
-    <form id="auth-form" onsubmit="loginUser(event)">
-      <div class="input-group">
-        <label for="username">Oyuncu Adı</label>
-        <input type="text" id="username" placeholder="Oyuncu adınızı girin" required>
-      </div>
-      <div class="input-group">
-        <label for="password">Şifre</label>
-        <input type="password" id="password" placeholder="Şifrenizi girin" required>
-      </div>
-      <button type="submit" class="btn">Kayıt Ol / Giriş Yap</button>
-    </form>
-  </div>
+### 1. GTA VI — "Vice City Sürücü & Takip" (2D Top-Down Racing)
+* **Konu:** Vice City sokaklarında polisten kaçarken para ve bonus topladığın, engellere takılmamaya çalıştığın kuş bakışı bir sürüş oyunu.
+* **Oyun Mantığı:** 
+  * `HTML5 Canvas` kullanarak bir yol ve araba çizersin.
+  * Sol/sağ ok tuşlarıyla arabayı yönlendirir, yukarıdan aşağıya doğru gelen engellerden (polis arabaları, barikatlar) kaçarsın.
+  * Skoru ekranda anlık tutup hızlanan bir yapı kurabilirsin.
 
-  <!-- 2. OYUN SEÇİM MENÜSÜ -->
-  <div id="games-menu-container">
-    <h2>Oyun Kütüphanesi</h2>
-    <p class="subtitle">Oynamak istediğin oyuna tıkla!</p>
+### 2. Mafya: The Old Country — "Sicilya Gizlilik & Kaçış" (2D Stealth / Runner)
+* **Konu:** 1900'lerin başında Sicilya'da geçen, muhafızların görüş alanından kaçarak hedef noktaya ulaşmaya çalıştığın bir gizlilik (stealth) mini oyunu.
+* **Oyun Mantığı:**
+  * Karakterini yön tuşlarıyla hareket ettirirsin.
+  * Haritada devriye atan muhafızlar (düşmanlar) olur ve önlerinde dönen bir "görüş açısı" (kırmızı koni) bulunur.
+  * Muhafızların görüş alanına girmeden siperlerin (kutular, duvarlar) arkasından geçerek finiş noktasına ulaşırsın.
 
-    <div class="games-grid">
-      <div class="game-card">
-        <div class="icon-box">🐍</div>
-        <h4>Yılan Oyunu</h4>
-        <button class="btn" onclick="startSnakeGame()">Oyna</button>
-      </div>
+### 3. Marvel 1943: Rise of Hydra — "Siper Saldırısı" (2D Side-Scroller Action)
+* **Konu:** 2. Dünya Savaşı döneminde Paris sokaklarında geçen, siper alıp düşman askerlerini etkisiz hale getirdiğin aksiyon oyunu.
+* **Oyun Mantığı:**
+  * Karakterin ekranın solunda durur.
+  * Boşluk (Space) tuşuna basılı tuttuğunda siper alır (hasar almaz), bıraktığında ateş eder.
+  * Sağ taraftan gelen düşmanlar ateş etmeden önce onları fare tıklamasıyla vurmaya çalışırsın.
 
-      <div class="game-card disabled">
-        <div class="icon-box">🧱</div>
-        <h4>Brick Breaker</h4>
-        <button class="btn" style="background:#475569;">Yakında</button>
-      </div>
+---
 
-      <div class="game-card disabled">
-        <div class="icon-box">🚗</div>
-        <h4>Araba Yarışı</h4>
-        <button class="btn" style="background:#475569;">Yakında</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- 3. YILAN OYUNU EKRANI -->
-  <div id="game-container">
-    <div class="top-bar">
-      <button class="btn btn-small" onclick="backToMenu()">⬅️ Menü</button>
-      <div class="scores">
-        Oyuncu: <span id="player-display">-</span> | 
-        Skor: <span id="score">0</span>
-      </div>
-      <button class="btn btn-small" onclick="toggleFullScreen()">Tam Ekran</button>
-    </div>
-
-    <div class="game-layout">
-      <!-- TELEFON SANAL YÖN BUTONLARI (D-PAD) -->
-      <div id="touch-controls">
-        <button class="dpad-btn" onclick="handleDirection('UP')">⬆️</button>
-        <div class="dpad-row">
-          <button class="dpad-btn" onclick="handleDirection('LEFT')">⬅️</button>
-          <button class="dpad-btn" onclick="handleDirection('RIGHT')">➡️</button>
-        </div>
-        <button class="dpad-btn" onclick="handleDirection('DOWN')">⬇️</button>
-      </div>
-
-      <canvas id="gameCanvas" width="600" height="600"></canvas>
-
-      <div class="leaderboard">
-        <h3>🏆 Top 5 Rekor</h3>
-        <ol id="leaderboard-list">
-          <li><span>-</span><span class="score-val">0</span></li>
-        </ol>
-      </div>
-    </div>
-    
-    <div class="controls-info" id="status-text">Oynamak için yön tuşlarını veya okları kullanın!</div>
-  </div>
-
-  <script>
-    let currentUser = "";
-
-    function loginUser(e) {
-      e.preventDefault();
-      const user = document.getElementById("username").value.trim();
-      const pass = document.getElementById("password").value.trim();
-
-      if (user && pass) {
-        currentUser = user;
-        document.getElementById("player-display").innerText = currentUser;
-        document.getElementById("modal-player-name").innerText = currentUser;
-        
-        document.getElementById("auth-container").style.display = "none";
-        document.getElementById("games-menu-container").style.display = "flex";
-        document.getElementById("settings-cog").style.display = "block";
-      }
-    }
-
-    function startSnakeGame() {
-      document.getElementById("games-menu-container").style.display = "none";
-      document.getElementById("game-container").style.display = "flex";
-      
-      updateLeaderboardDisplay();
-      initGame();
-    }
-
-    function backToMenu() {
-      if (gameInterval) clearInterval(gameInterval);
-      gameStarted = false;
-      document.getElementById("game-container").style.display = "none";
-      document.getElementById("games-menu-container").style.display = "flex";
-    }
-
-    function openSettings() {
-      document.getElementById("settings-modal").style.display = "flex";
-      if (gameStarted) {
-        gameStarted = false;
-        document.getElementById("status-text").innerText = "Oyun Duraklatıldı.";
-      }
-    }
-
-    function closeSettings() {
-      document.getElementById("settings-modal").style.display = "none";
-    }
-
-    function logoutUser() {
-      closeSettings();
-      if (gameInterval) clearInterval(gameInterval);
-      
-      currentUser = "";
-      document.getElementById("username").value = "";
-      document.getElementById("password").value = "";
-      
-      document.getElementById("settings-cog").style.display = "none";
-      document.getElementById("game-container").style.display = "none";
-      document.getElementById("games-menu-container").style.display = "none";
-      document.getElementById("auth-container").style.display = "block";
-    }
-
-    function toggleFullScreen() {
-      if (!document.fullscreenElement) {
-        document.documentElement.requestFullscreen();
-      } else {
-        if (document.exitFullscreen) {
-          document.exitFullscreen();
-        }
-      }
-    }
-
-    // OYUN MANTIĞI
-    const canvas = document.getElementById("gameCanvas");
-    const ctx = canvas.getContext("2d");
-
-    const gridSize = 20; 
-    const tileCount = canvas.width / gridSize; 
-
-    let snake = [];
-    let food = { x: 5, y: 5 };
-    let dx = 0;
-    let dy = 0;
-    let score = 0;
-    let gameInterval = null;
-    let gameStarted = false;
-
-    function getAllScores() {
-      const scores = localStorage.getItem("snake_all_scores");
-      return scores ? JSON.parse(scores) : {};
-    }
-
-    function saveUserScore(newScore) {
-      const scores = getAllScores();
-      if (!scores[currentUser] || newScore > scores[currentUser]) {
-        scores[currentUser] = newScore;
-        localStorage.setItem("snake_all_scores", JSON.stringify(scores));
-        updateLeaderboardDisplay();
-      }
-    }
-
-    function updateLeaderboardDisplay() {
-      const scores = getAllScores();
-      let sortedList = Object.keys(scores).map(user => {
-        return { name: user, score: scores[user] };
-      });
-
-      sortedList.sort((a, b) => b.score - a.score);
-      const top5 = sortedList.slice(0, 5);
-
-      const leaderboardEl = document.getElementById("leaderboard-list");
-      leaderboardEl.innerHTML = "";
-
-      if (top5.length === 0) {
-        leaderboardEl.innerHTML = "<li><span>Henüz rekor yok</span><span class='score-val'>0</span></li>";
-        return;
-      }
-
-      top5.forEach((item, index) => {
-        const li = document.createElement("li");
-        li.innerHTML = `<span>${index + 1}. ${item.name}</span><span class="score-val">${item.score}</span>`;
-        leaderboardEl.appendChild(li);
-      });
-    }
-
-    function initGame() {
-      if (gameInterval) clearInterval(gameInterval);
-      
-      snake = [{ x: 15, y: 15 }, { x: 15, y: 16 }, { x: 15, y: 17 }];
-      dx = 0;
-      dy = -1;
-      score = 0;
-      gameStarted = false;
-      
-      document.getElementById("score").innerText = score;
-      document.getElementById("status-text").innerText = "Başlamak için Yön Tuşlarına veya Ok Butonlarına basın!";
-      
-      generateFood();
-      draw();
-      
-      gameInterval = setInterval(gameLoop, 100);
-    }
-
-    function gameLoop() {
-      if (gameStarted) {
-        update();
-      }
-      draw();
-    }
-
-    function update() {
-      const head = { x: snake[0].x + dx, y: snake[0].y + dy };
-
-      if (head.x < 0 || head.x >= tileCount || head.y < 0 || head.y >= tileCount) {
-        gameOver();
-        return;
-      }
-
-      for (let i = 0; i < snake.length; i++) {
-        if (head.x === snake[i].x && head.y === snake[i].y) {
-          gameOver();
-          return;
-        }
-      }
-
-      snake.unshift(head);
-
-      if (head.x === food.x && head.y === food.y) {
-        score += 10;
-        document.getElementById("score").innerText = score;
-        saveUserScore(score);
-        generateFood();
-      } else {
-        snake.pop();
-      }
-    }
-
-    function drawRoundedRect(x, y, width, height, radius, color) {
-      ctx.fillStyle = color;
-      ctx.beginPath();
-      ctx.moveTo(x + radius, y);
-      ctx.arcTo(x + width, y, x + width, y + height, radius);
-      ctx.arcTo(x + width, y + height, x, y + height, radius);
-      ctx.arcTo(x, y + height, x, y, radius);
-      ctx.arcTo(x, y, x + width, y, radius);
-      ctx.closePath();
-      ctx.fill();
-    }
-
-    function draw() {
-      ctx.fillStyle = "#020617";
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-      const foodX = food.x * gridSize + gridSize / 2;
-      const foodY = food.y * gridSize + gridSize / 2;
-      ctx.fillStyle = "#ef4444";
-      ctx.beginPath();
-      ctx.arc(foodX, foodY, gridSize / 2 - 2, 0, Math.PI * 2);
-      ctx.fill();
-
-      snake.forEach((segment, index) => {
-        const x = segment.x * gridSize + 1;
-        const y = segment.y * gridSize + 1;
-        const size = gridSize - 2;
-
-        if (index === 0) {
-          drawRoundedRect(x, y, size, size, 8, "#4ade80");
-
-          ctx.fillStyle = "#020617";
-          let eyeSize = 3;
-          let eyeOffset1 = { x: 4, y: 4 };
-          let eyeOffset2 = { x: 12, y: 4 };
-
-          if (dx === 1) {
-            eyeOffset1 = { x: 12, y: 4 }; eyeOffset2 = { x: 12, y: 12 };
-          } else if (dx === -1) {
-            eyeOffset1 = { x: 4, y: 4 }; eyeOffset2 = { x: 4, y: 12 };
-          } else if (dy === 1) {
-            eyeOffset1 = { x: 4, y: 12 }; eyeOffset2 = { x: 12, y: 12 };
-          }
-
-          ctx.beginPath();
-          ctx.arc(x + eyeOffset1.x, y + eyeOffset1.y, eyeSize, 0, Math.PI * 2);
-          ctx.arc(x + eyeOffset2.x, y + eyeOffset2.y, eyeSize, 0, Math.PI * 2);
-          ctx.fill();
-
-        } else {
-          drawRoundedRect(x, y, size, size, 5, "#22c55e");
-        }
-      });
-    }
-
-    function generateFood() {
-      food.x = Math.floor(Math.random() * tileCount);
-      food.y = Math.floor(Math.random() * tileCount);
-    }
-
-    function gameOver() {
-      gameStarted = false;
-      clearInterval(gameInterval);
-      saveUserScore(score);
-      alert("Oyun Bitti! Skorunuz: " + score);
-      initGame();
-    }
-
-    // YÖN DEĞİŞTİRME MANTIĞI
-    function changeDirection(dir) {
-      let moved = false;
-      if (dir === "UP" && dy !== 1) { dx = 0; dy = -1; moved = true; }
-      if (dir === "DOWN" && dy !== -1) { dx = 0; dy = 1; moved = true; }
-      if (dir === "LEFT" && dx !== 1) { dx = -1; dy = 0; moved = true; }
-      if (dir === "RIGHT" && dx !== -1) { dx = 1; dy = 0; moved = true; }
-
-      if (moved && !gameStarted) {
-        gameStarted = true;
-        document.getElementById("status-text").innerText = "Oyun Başladı! Başarılar.";
-      }
-    }
-
-    function handleDirection(dir) {
-      changeDirection(dir);
-    }
-
-    window.addEventListener("keydown", e => {
-      if (document.activeElement.tagName === "INPUT") return;
-      if (document.getElementById("game-container").style.display !== "flex") return;
-
-      switch (e.key) {
-        case "ArrowUp": case "w": case "W": changeDirection("UP"); break;
-        case "ArrowDown": case "s": case "S": changeDirection("DOWN"); break;
-        case "ArrowLeft": case "a": case "A": changeDirection("LEFT"); break;
-        case "ArrowRight": case "d": case "D": changeDirection("RIGHT"); break;
-      }
-    });
-  </script>
-</body>
-</html>
+Bu fikirlerden hangisi ilgini çektiyse söyle, onun tüm HTML, CSS ve JavaScript kodlarını tek dosyada çalışacak şekilde eksiksiz hazırlayayım!
