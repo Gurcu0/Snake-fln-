@@ -331,7 +331,7 @@
       transform: scale(0.92);
     }
 
-    /* TELEFON DİK KONUM (PORTRAIT) */
+    /* TELEFON DİK KONUM */
     @media (max-width: 768px) and (orientation: portrait) {
       .top-bar {
         width: 100%;
@@ -365,7 +365,7 @@
       }
     }
 
-    /* TELEFON YATAY KONUM (LANDSCAPE - EL KONSOLU MODU) */
+    /* TELEFON YATAY KONUM (EL KONSOLU MODU) */
     @media (max-width: 900px) and (orientation: landscape) {
       #game-container {
         padding: 5px;
@@ -440,29 +440,452 @@
   <div id="settings-modal" class="modal-overlay">
     <div class="modal-card">
       <h3>Ayar Menüsü</h3>
-      <Yakında çıkacak (henüz çıkmamış) büyük oyunlar için Visual Studio Code'da HTML, CSS ve JavaScript kullanarak oynanabilir, keyifli 2D mini projeler hazırlayabilirsin. İşte VS Code'da yazabileceğin 3 farklı oyun fikri ve mantığı:
+      <p style="margin-bottom: 1rem; font-size: 0.9rem; color: #94a3b8;">
+        Aktif Oyuncu: <b id="modal-player-name" style="color:#fff;">-</b>
+      </p>
+      <button class="btn btn-danger" onclick="logoutUser()">Hesap Değiştir / Çıkış Yap</button>
+      <button class="btn" style="background:#475569; margin-top: 8px;" onclick="closeSettings()">Kapat</button>
+    </div>
+  </div>
 
-### 1. GTA VI — "Vice City Sürücü & Takip" (2D Top-Down Racing)
-* **Konu:** Vice City sokaklarında polisten kaçarken para ve bonus topladığın, engellere takılmamaya çalıştığın kuş bakışı bir sürüş oyunu.
-* **Oyun Mantığı:** 
-  * `HTML5 Canvas` kullanarak bir yol ve araba çizersin.
-  * Sol/sağ ok tuşlarıyla arabayı yönlendirir, yukarıdan aşağıya doğru gelen engellerden (polis arabaları, barikatlar) kaçarsın.
-  * Skoru ekranda anlık tutup hızlanan bir yapı kurabilirsin.
+  <!-- 1. GİRİŞ EKRANI -->
+  <div id="auth-container">
+    <h2>Oyun Portalı</h2>
+    <form id="auth-form" onsubmit="loginUser(event)">
+      <div class="input-group">
+        <label for="username">Oyuncu Adı</label>
+        <input type="text" id="username" placeholder="Oyuncu adınızı girin" required>
+      </div>
+      <div class="input-group">
+        <label for="password">Şifre</label>
+        <input type="password" id="password" placeholder="Şifrenizi girin" required>
+      </div>
+      <button type="submit" class="btn">Kayıt Ol / Giriş Yap</button>
+    </form>
+  </div>
 
-### 2. Mafya: The Old Country — "Sicilya Gizlilik & Kaçış" (2D Stealth / Runner)
-* **Konu:** 1900'lerin başında Sicilya'da geçen, muhafızların görüş alanından kaçarak hedef noktaya ulaşmaya çalıştığın bir gizlilik (stealth) mini oyunu.
-* **Oyun Mantığı:**
-  * Karakterini yön tuşlarıyla hareket ettirirsin.
-  * Haritada devriye atan muhafızlar (düşmanlar) olur ve önlerinde dönen bir "görüş açısı" (kırmızı koni) bulunur.
-  * Muhafızların görüş alanına girmeden siperlerin (kutular, duvarlar) arkasından geçerek finiş noktasına ulaşırsın.
+  <!-- 2. OYUN SEÇİM MENÜSÜ -->
+  <div id="games-menu-container">
+    <h2>Oyun Kütüphanesi</h2>
+    <p class="subtitle">Oynamak istediğin oyuna tıkla!</p>
 
-### 3. Marvel 1943: Rise of Hydra — "Siper Saldırısı" (2D Side-Scroller Action)
-* **Konu:** 2. Dünya Savaşı döneminde Paris sokaklarında geçen, siper alıp düşman askerlerini etkisiz hale getirdiğin aksiyon oyunu.
-* **Oyun Mantığı:**
-  * Karakterin ekranın solunda durur.
-  * Boşluk (Space) tuşuna basılı tuttuğunda siper alır (hasar almaz), bıraktığında ateş eder.
-  * Sağ taraftan gelen düşmanlar ateş etmeden önce onları fare tıklamasıyla vurmaya çalışırsın.
+    <div class="games-grid">
+      <div class="game-card">
+        <div class="icon-box">🐍</div>
+        <h4>Yılan Oyunu</h4>
+        <button class="btn" onclick="startSelectedGame('snake')">Oyna</button>
+      </div>
 
----
+      <div class="game-card">
+        <div class="icon-box">🧱</div>
+        <h4>Brick Breaker</h4>
+        <button class="btn" onclick="startSelectedGame('brick')">Oyna</button>
+      </div>
 
-Bu fikirlerden hangisi ilgini çektiyse söyle, onun tüm HTML, CSS ve JavaScript kodlarını tek dosyada çalışacak şekilde eksiksiz hazırlayayım!
+      <div class="game-card">
+        <div class="icon-box">🚗</div>
+        <h4>Araba Yarışı</h4>
+        <button class="btn" onclick="startSelectedGame('car')">Oyna</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. OYUN EKRANI -->
+  <div id="game-container">
+    <div class="top-bar">
+      <button class="btn btn-small" onclick="backToMenu()">⬅️ Menü</button>
+      <div class="scores">
+        Oyuncu: <span id="player-display">-</span> | 
+        Skor: <span id="score">0</span>
+      </div>
+      <button class="btn btn-small" onclick="toggleFullScreen()">Tam Ekran</button>
+    </div>
+
+    <div class="game-layout">
+      <!-- TELEFON SANAL YÖN BUTONLARI (D-PAD) -->
+      <div id="touch-controls">
+        <button class="dpad-btn" onclick="handleDirection('UP')">⬆️</button>
+        <div class="dpad-row">
+          <button class="dpad-btn" onclick="handleDirection('LEFT')">⬅️</button>
+          <button class="dpad-btn" onclick="handleDirection('RIGHT')">➡️</button>
+        </div>
+        <button class="dpad-btn" onclick="handleDirection('DOWN')">⬇️</button>
+      </div>
+
+      <canvas id="gameCanvas" width="600" height="600"></canvas>
+
+      <div class="leaderboard">
+        <h3>🏆 Top 5 Rekor</h3>
+        <ol id="leaderboard-list">
+          <li><span>-</span><span class="score-val">0</span></li>
+        </ol>
+      </div>
+    </div>
+    
+    <div class="controls-info" id="status-text">Oynamak için yön tuşlarını veya okları kullanın!</div>
+  </div>
+
+  <script>
+    let currentUser = "";
+    let activeGame = ""; // 'snake', 'brick', 'car'
+    let gameInterval = null;
+    let gameStarted = false;
+    let score = 0;
+
+    const canvas = document.getElementById("gameCanvas");
+    const ctx = canvas.getContext("2d");
+
+    function loginUser(e) {
+      e.preventDefault();
+      const user = document.getElementById("username").value.trim();
+      const pass = document.getElementById("password").value.trim();
+
+      if (user && pass) {
+        currentUser = user;
+        document.getElementById("player-display").innerText = currentUser;
+        document.getElementById("modal-player-name").innerText = currentUser;
+        
+        document.getElementById("auth-container").style.display = "none";
+        document.getElementById("games-menu-container").style.display = "flex";
+        document.getElementById("settings-cog").style.display = "block";
+      }
+    }
+
+    function openSettings() {
+      document.getElementById("settings-modal").style.display = "flex";
+      if (gameStarted) {
+        gameStarted = false;
+        document.getElementById("status-text").innerText = "Oyun Duraklatıldı.";
+      }
+    }
+
+    function closeSettings() {
+      document.getElementById("settings-modal").style.display = "none";
+    }
+
+    function logoutUser() {
+      closeSettings();
+      if (gameInterval) clearInterval(gameInterval);
+      
+      currentUser = "";
+      document.getElementById("username").value = "";
+      document.getElementById("password").value = "";
+      
+      document.getElementById("settings-cog").style.display = "none";
+      document.getElementById("game-container").style.display = "none";
+      document.getElementById("games-menu-container").style.display = "none";
+      document.getElementById("auth-container").style.display = "block";
+    }
+
+    function backToMenu() {
+      if (gameInterval) clearInterval(gameInterval);
+      gameStarted = false;
+      document.getElementById("game-container").style.display = "none";
+      document.getElementById("games-menu-container").style.display = "flex";
+    }
+
+    function toggleFullScreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen();
+      } else {
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        }
+      }
+    }
+
+    /* LİDERLİK TABLOSU MANTIĞI */
+    function getAllScores(gameName) {
+      const scores = localStorage.getItem(gameName + "_scores");
+      return scores ? JSON.parse(scores) : {};
+    }
+
+    function saveUserScore(gameName, newScore) {
+      if (newScore <= 0) return;
+      const scores = getAllScores(gameName);
+      if (!scores[currentUser] || newScore > scores[currentUser]) {
+        scores[currentUser] = newScore;
+        localStorage.setItem(gameName + "_scores", JSON.stringify(scores));
+        updateLeaderboardDisplay(gameName);
+      }
+    }
+
+    function updateLeaderboardDisplay(gameName) {
+      const scores = getAllScores(gameName);
+      let sortedList = Object.keys(scores).map(user => {
+        return { name: user, score: scores[user] };
+      });
+
+      sortedList.sort((a, b) => b.score - a.score);
+      const top5 = sortedList.slice(0, 5);
+
+      const leaderboardEl = document.getElementById("leaderboard-list");
+      leaderboardEl.innerHTML = "";
+
+      if (top5.length === 0) {
+        leaderboardEl.innerHTML = "<li><span>Henüz rekor yok</span><span class='score-val'>0</span></li>";
+        return;
+      }
+
+      top5.forEach((item, index) => {
+        const li = document.createElement("li");
+        li.innerHTML = `<span>${index + 1}. ${item.name}</span><span class="score-val">${item.score}</span>`;
+        leaderboardEl.appendChild(li);
+      });
+    }
+
+    function startSelectedGame(gameType) {
+      activeGame = gameType;
+      document.getElementById("games-menu-container").style.display = "none";
+      document.getElementById("game-container").style.display = "flex";
+      
+      updateLeaderboardDisplay(activeGame);
+
+      if (activeGame === 'snake') initSnake();
+      else if (activeGame === 'brick') initBrick();
+      else if (activeGame === 'car') initCar();
+    }
+
+    /* ---------------- 1. YILAN OYUNU MANTIĞI ---------------- */
+    const gridSize = 20; 
+    const tileCount = canvas.width / gridSize; 
+    let snake = [];
+    let food = { x: 5, y: 5 };
+    let dx = 0, dy = -1;
+
+    function initSnake() {
+      if (gameInterval) clearInterval(gameInterval);
+      snake = [{ x: 15, y: 15 }, { x: 15, y: 16 }, { x: 15, y: 17 }];
+      dx = 0; dy = -1; score = 0; gameStarted = false;
+      document.getElementById("score").innerText = score;
+      document.getElementById("status-text").innerText = "Başlamak için Yön Tuşlarına basın!";
+      generateSnakeFood();
+      drawSnakeGame();
+      gameInterval = setInterval(snakeLoop, 100);
+    }
+
+    function snakeLoop() {
+      if (gameStarted) {
+        const head = { x: snake[0].x + dx, y: snake[0].y + dy };
+        if (head.x < 0 || head.x >= tileCount || head.y < 0 || head.y >= tileCount) {
+          endGame("Yılan duvara çarptı!"); return;
+        }
+        for (let i = 0; i < snake.length; i++) {
+          if (head.x === snake[i].x && head.y === snake[i].y) {
+            endGame("Yılan kendisine çarptı!"); return;
+          }
+        }
+        snake.unshift(head);
+        if (head.x === food.x && head.y === food.y) {
+          score += 10;
+          document.getElementById("score").innerText = score;
+          saveUserScore('snake', score);
+          generateSnakeFood();
+        } else {
+          snake.pop();
+        }
+      }
+      drawSnakeGame();
+    }
+
+    function drawSnakeGame() {
+      ctx.fillStyle = "#020617";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      ctx.fillStyle = "#ef4444";
+      ctx.beginPath();
+      ctx.arc(food.x * gridSize + gridSize / 2, food.y * gridSize + gridSize / 2, gridSize / 2 - 2, 0, Math.PI * 2);
+      ctx.fill();
+
+      snake.forEach((segment, index) => {
+        ctx.fillStyle = index === 0 ? "#4ade80" : "#22c55e";
+        ctx.fillRect(segment.x * gridSize + 1, segment.y * gridSize + 1, gridSize - 2, gridSize - 2);
+      });
+    }
+
+    function generateSnakeFood() {
+      food.x = Math.floor(Math.random() * tileCount);
+      food.y = Math.floor(Math.random() * tileCount);
+    }
+
+    /* ---------------- 2. BRICK BREAKER MANTIĞI ---------------- */
+    let paddleWidth = 100, paddleHeight = 15, paddleX = 250;
+    let ballX = 300, ballY = 500, ballDX = 4, ballDY = -4, ballRadius = 8;
+    let bricks = [], brickRows = 5, brickCols = 7, brickWidth = 75, brickHeight = 20, brickPadding = 8, brickOffsetTop = 50, brickOffsetLeft = 12;
+
+    function initBrick() {
+      if (gameInterval) clearInterval(gameInterval);
+      paddleX = (canvas.width - paddleWidth) / 2;
+      ballX = canvas.width / 2; ballY = canvas.height - 40;
+      ballDX = 4; ballDY = -4; score = 0; gameStarted = false;
+      document.getElementById("score").innerText = score;
+      document.getElementById("status-text").innerText = "Başlamak için Sol/Sağ Tuşlarına basın!";
+
+      bricks = [];
+      for (let c = 0; c < brickCols; c++) {
+        bricks[c] = [];
+        for (let r = 0; r < brickRows; r++) {
+          bricks[c][r] = { x: 0, y: 0, status: 1 };
+        }
+      }
+      drawBrickGame();
+      gameInterval = setInterval(brickLoop, 1000 / 60);
+    }
+
+    function brickLoop() {
+      if (gameStarted) {
+        ballX += ballDX; ballY += ballDY;
+
+        if (ballX + ballDX > canvas.width - ballRadius || ballX + ballDX < ballRadius) ballDX = -ballDX;
+        if (ballY + ballDY < ballRadius) ballDY = -ballDY;
+        else if (ballY + ballDY > canvas.height - ballRadius - paddleHeight) {
+          if (ballX > paddleX && ballX < paddleX + paddleWidth) {
+            ballDY = -ballDY;
+          } else if (ballY + ballDY > canvas.height - ballRadius) {
+            endGame("Top düştü!"); return;
+          }
+        }
+
+        for (let c = 0; c < brickCols; c++) {
+          for (let r = 0; r < brickRows; r++) {
+            let b = bricks[c][r];
+            if (b.status === 1) {
+              if (ballX > b.x && ballX < b.x + brickWidth && ballY > b.y && ballY < b.y + brickHeight) {
+                ballDY = -ballDY; b.status = 0; score += 10;
+                document.getElementById("score").innerText = score;
+                saveUserScore('brick', score);
+              }
+            }
+          }
+        }
+      }
+      drawBrickGame();
+    }
+
+    function drawBrickGame() {
+      ctx.fillStyle = "#020617";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      for (let c = 0; c < brickCols; c++) {
+        for (let r = 0; r < brickRows; r++) {
+          if (bricks[c][r].status === 1) {
+            let brickX = (c * (brickWidth + brickPadding)) + brickOffsetLeft;
+            let brickY = (r * (brickHeight + brickPadding)) + brickOffsetTop;
+            bricks[c][r].x = brickX; bricks[c][r].y = brickY;
+            ctx.fillStyle = "#38bdf8";
+            ctx.fillRect(brickX, brickY, brickWidth, brickHeight);
+          }
+        }
+      }
+
+      ctx.fillStyle = "#f59e0b";
+      ctx.fillRect(paddleX, canvas.height - paddleHeight - 10, paddleWidth, paddleHeight);
+
+      ctx.fillStyle = "#ef4444";
+      ctx.beginPath();
+      ctx.arc(ballX, ballY, ballRadius, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    /* ---------------- 3. ARABA YARIŞI MANTIĞI ---------------- */
+    let carX = 270, carY = 480, carWidth = 50, carHeight = 80;
+    let obstacles = [], obstacleSpeed = 5, carScore = 0;
+
+    function initCar() {
+      if (gameInterval) clearInterval(gameInterval);
+      carX = 275; carScore = 0; score = 0; obstacleSpeed = 5; gameStarted = false;
+      obstacles = [];
+      document.getElementById("score").innerText = score;
+      document.getElementById("status-text").innerText = "Başlamak için Sol/Sağ Tuşlarına basın!";
+      drawCarGame();
+      gameInterval = setInterval(carLoop, 1000 / 60);
+    }
+
+    function carLoop() {
+      if (gameStarted) {
+        carScore++;
+        if (carScore % 10 === 0) {
+          score = Math.floor(carScore / 10);
+          document.getElementById("score").innerText = score;
+          saveUserScore('car', score);
+        }
+
+        if (carScore % 90 === 0) {
+          let obsX = Math.random() * (canvas.width - 60);
+          obstacles.push({ x: obsX, y: -80, width: 50, height: 80 });
+        }
+
+        for (let i = 0; i < obstacles.length; i++) {
+          obstacles[i].y += obstacleSpeed;
+          if (
+            carX < obstacles[i].x + obstacles[i].width &&
+            carX + carWidth > obstacles[i].x &&
+            carY < obstacles[i].y + obstacles[i].height &&
+            carY + carHeight > obstacles[i].y
+          ) {
+            endGame("Kaza Yaptın!"); return;
+          }
+        }
+        if (obstacles.length > 0 && obstacles[0].y > canvas.height) obstacles.shift();
+      }
+      drawCarGame();
+    }
+
+    function drawCarGame() {
+      ctx.fillStyle = "#1e293b";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      ctx.strokeStyle = "#ffffff";
+      ctx.setLineDash([20, 20]);
+      ctx.beginPath();
+      ctx.moveTo(canvas.width / 2, 0); ctx.lineTo(canvas.width / 2, canvas.height);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      ctx.fillStyle = "#38bdf8";
+      ctx.fillRect(carX, carY, carWidth, carHeight);
+
+      ctx.fillStyle = "#ef4444";
+      obstacles.forEach(obs => ctx.fillRect(obs.x, obs.y, obs.width, obs.height));
+    }
+
+    /* ---------------- GENEL YÖNETİM VE KONTROLLER ---------------- */
+    function endGame(msg) {
+      gameStarted = false;
+      clearInterval(gameInterval);
+      alert("Oyun Bitti! " + msg + " Skorunuz: " + score);
+      startSelectedGame(activeGame);
+    }
+
+    function handleDirection(dir) {
+      if (!gameStarted) {
+        gameStarted = true;
+        document.getElementById("status-text").innerText = "Oyun Başladı!";
+      }
+
+      if (activeGame === 'snake') {
+        if (dir === 'UP' && dy !== 1) { dx = 0; dy = -1; }
+        if (dir === 'DOWN' && dy !== -1) { dx = 0; dy = 1; }
+        if (dir === 'LEFT' && dx !== 1) { dx = -1; dy = 0; }
+        if (dir === 'RIGHT' && dx !== -1) { dx = 1; dy = 0; }
+      } else if (activeGame === 'brick') {
+        if (dir === 'LEFT' && paddleX > 0) paddleX -= 35;
+        if (dir === 'RIGHT' && paddleX < canvas.width - paddleWidth) paddleX += 35;
+      } else if (activeGame === 'car') {
+        if (dir === 'LEFT' && carX > 10) carX -= 30;
+        if (dir === 'RIGHT' && carX < canvas.width - carWidth - 10) carX += 30;
+      }
+    }
+
+    window.addEventListener("keydown", e => {
+      if (document.activeElement.tagName === "INPUT") return;
+      if (document.getElementById("game-container").style.display !== "flex") return;
+
+      if (e.key === "ArrowUp" || e.key === "w" || e.key === "W") handleDirection('UP');
+      if (e.key === "ArrowDown" || e.key === "s" || e.key === "S") handleDirection('DOWN');
+      if (e.key === "ArrowLeft" || e.key === "a" || e.key === "A") handleDirection('LEFT');
+      if (e.key === "ArrowRight" || e.key === "d" || e.key === "D") handleDirection('RIGHT');
+    });
+  </script>
+</body>
+</html>
